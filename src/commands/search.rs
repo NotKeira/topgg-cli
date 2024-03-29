@@ -1,44 +1,57 @@
-use std::string::String;
-
 use reqwest::blocking::Client;
 
 use crate::helpers::strip::Parameters;
 
-fn search(query: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let client = Client::new();
-    let url = format!("https://top.gg/api/client/entities/search?entityType=bot&platform=discord&query={}", query);
-    let response = client.get(&url).send()?;
+use crate::helpers::bot_format::Bot;
 
-    if response.status().is_success() {
+fn search(query: &str) -> Result<Vec<Bot>, Box<dyn std::error::Error>> {
+    let client = Client::new();
+    let url = format!("https://top.gg/api/client/entities/search?entityType=bot&platform=discord&newSortingOrder=TOP&query={}", query);
+    let response = client.get(&url).send()?;
+    if response.status().as_u16() == 200 {
         let data = response.json::<serde_json::Value>()?;
 
-
-        if let Some(bots) = data.get("bots").and_then(|bots| bots.as_array()) {
+        if let Some(bots) = data.get("results").and_then(|bots| bots.as_array()) {
+            let mut bot_results = Vec::new();
             for bot in bots {
-                if let Some(bot_name) = bot.get("name").and_then(|name| name.as_str()) {
-                    println!("Bot name: {}", bot_name);
+                if let (Some(bot_name), Some(bot_desc), Some(bot_id)) = (bot.get("name").and_then(|name| name.as_str()), bot.get("description").and_then(|desc| desc.as_str()), bot.get("id").and_then(|id| id.as_str())) {
+                    bot_results.push(Bot {
+                        name: bot_name.to_string(),
+                        id: bot_id.to_string(),
+                        description: bot_desc.to_string(),
+                    });
                 }
-                println!("{}", bot)
             }
+            return Ok(bot_results);
         }
     } else {
         println!("Failed to search for bots. Status code: {}", response.status());
     }
 
-    Ok(())
+    Ok(Vec::new())
 }
 
 pub fn execute(parameters: Parameters) -> String {
     if !parameters.args.is_empty() {
         let args = parameters.args.join(" ");
-        println!("Args: {}", args);
-        let result = search(&args);
-        match result {
-            Ok(_) => "Search complete.".to_string(),
+        match search(&args) {
+            Ok(bot_results) => {
+                if bot_results.is_empty() {
+                    "No bots found.".to_string()
+                } else {
+                    let mut result_string = String::new();
+                    for bot in bot_results {
+                        result_string.push_str(&format!("{}\n\n", bot));
+                    }
+                    let mut full_result_string = String::new();
+                    full_result_string.push('\n'); // Append newline character
+                    full_result_string.push_str(&result_string); // Append the result_string
+                    full_result_string
+                }
+            }
             Err(_) => "Failed to search.".to_string(),
         }
-        // convert the search results to a parsable format then return them as a formatted string
     } else {
-        "No search query provided.".parse().unwrap()
+        "No search query provided.".to_string()
     }
 }

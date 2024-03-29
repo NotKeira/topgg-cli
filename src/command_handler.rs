@@ -1,4 +1,4 @@
-use crate::commands::{exit, help, search};
+use crate::commands::{exit, help, search, find};
 use crate::helpers::strip::Parameters;
 pub struct CommandHandler;
 
@@ -15,6 +15,7 @@ impl CommandHandler {
         match command.as_str() {
             "exit" => Ok(exit::execute()),
             "search" => Ok(search::execute(_variables)),
+            "find" => Ok(find::execute(_variables)),
             "help" => Ok(help::execute()),
             _ => Err(Error::EmptyCommand),
         }
