@@ -1,8 +1,33 @@
-// topgg-cli entry point
-// Nothing implemented yet — this is the scaffold.
+import { parseArgs } from "./cli/args.js";
+import { resolve } from "./cli/router.js";
+import { printHelp, printVersion } from "./cli/help.js";
 
-function main(): void {
-    console.log("topgg-cli");
+async function main(): Promise<void> {
+    const args = parseArgs(process.argv);
+
+    if (args.flags["version"]) {
+        printVersion();
+        return;
+    }
+
+    if (!args.command || args.flags["help"] || args.flags["h"]) {
+        printHelp();
+        return;
+    }
+
+    const command = resolve(args.command);
+
+    if (!command) {
+        console.error(`Unknown command: ${args.command}`);
+        console.error(`Run 'topgg --help' to see available commands.`);
+        process.exit(1);
+    }
+
+    await command.run(args);
 }
 
-main();
+main().catch((err) => {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exit(1);
+});
+
