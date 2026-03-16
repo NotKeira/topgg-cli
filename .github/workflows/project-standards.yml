@@ -34,8 +34,6 @@ jobs:
             "CODEOWNERS"
             "LICENSE"
             "VERSION"
-            "rust/.gitkeep"
-            "typescript/.gitkeep"
           )
 
           for file in "${required_files[@]}"; do

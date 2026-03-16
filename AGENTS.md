@@ -17,7 +17,7 @@ AI assistance is optional and secondary to human judgement. Maintainers own desi
 - Development branch: `dev`.
 - Production branch: `main`.
 - Promotion to `main` is done via pull request.
-- Never commit directly to `main` or `dev`. Always use a feature branch named `dev/branch-name`.
+- Never commit directly to `main` or `dev`. Always use a feature branch named `feat/branch-name`.
 - One commit per change — do not batch unrelated work.
 - Focus on one task at a time before moving on.
 - `VERSION` controls release intent and must use one of:
