@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+
+# TypeScript
+typescript/node_modules/
+typescript/dist/
+typescript/coverage/
+
+# Rust
+rust/target/
+
+# Environment
+.env

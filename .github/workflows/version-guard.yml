@@ -1,0 +1,45 @@
+name: Version Guard
+
+on:
+    pull_request:
+        branches:
+            - dev
+            - main
+        paths:
+            - VERSION
+    push:
+        branches:
+            - dev
+            - main
+        paths:
+            - VERSION
+
+permissions:
+    contents: read
+
+jobs:
+    validate-version:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out
+              uses: actions/checkout@v4
+
+            - name: Validate VERSION format
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  version="$(tr -d '[:space:]' < VERSION)"
+
+                  if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    echo "Stable version accepted: $version"
+                    exit 0
+                  fi
+
+                  if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
+                    echo "Release candidate accepted: $version"
+                    exit 0
+                  fi
+
+                  echo "Invalid VERSION format: $version"
+                  echo "Allowed formats: x.y.z or x.y.z-rc.n"
+                  exit 1
