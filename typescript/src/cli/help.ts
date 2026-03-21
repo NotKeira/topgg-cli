@@ -15,8 +15,9 @@ export function printHelp(): void {
     if (commands.length > 0) {
         console.log("Commands:");
         for (const cmd of commands) {
+            const aliases = cmd.aliases && cmd.aliases.length > 0 ? ` (aliases: ${cmd.aliases.join(", ")})` : "";
             const usage = cmd.usage ? `  ${cmd.usage}` : "";
-            console.log(`  ${cmd.name.padEnd(16)}${cmd.description}${usage}`);
+            console.log(`  ${cmd.name.padEnd(16)}${cmd.description}${aliases}${usage}`);
         }
         console.log("");
     }
