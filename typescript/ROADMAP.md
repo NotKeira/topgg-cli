@@ -6,8 +6,8 @@ Implementation plan for the TypeScript layer of topgg-cli. See the root `ROADMAP
 
 ## Setup
 
-- [ ] Initialise `package.json` with name, version, and bin entry
-- [ ] Configure `tsconfig.json` (strict, ESM output)
+- [x] Initialise `package.json` with name, version, and bin entry
+- [x] Configure `tsconfig.json` (strict, ESM output)
 - [ ] Add `eslint` and `prettier` with project-standard config
 - [ ] Set up `vitest` for testing
 
@@ -19,15 +19,21 @@ Implementation plan for the TypeScript layer of topgg-cli. See the root `ROADMAP
 
 ## CLI Framework
 
-- [ ] Set up `commander` (or equivalent) as the CLI driver
+- [x] Set up custom CLI runtime (arg parser, router, executor)
+- [x] Register default commands through a central registry
 - [ ] Global `--token` and `--format` flags
-- [ ] Error handling and user-friendly messages
+- [x] Error handling with command-specific exit codes and messages
 
 ## Commands
 
-- [ ] `stats <botId>` — fetch and display bot statistics
-- [ ] `votes <botId>` — list recent voters
-- [ ] `search <query>` — search for bots or servers
+- [x] `about` — show CLI and runtime metadata
+- [x] `ping` — runtime health check command
+- [x] `stats <botId>` — command scaffold with validation and placeholder
+- [x] `votes <botId>` — command scaffold with validation and placeholder
+- [x] `search <query>` — command scaffold with validation and placeholder
+- [ ] `stats <botId>` — fetch and display bot statistics (API-backed)
+- [ ] `votes <botId>` — list recent voters (API-backed)
+- [ ] `search <query>` — search for bots or servers (API-backed)
 - [ ] `post stats <botId>` — post server/shard count to top.gg
 - [ ] `webhook set` / `webhook clear` — manage webhook config
 
@@ -45,6 +51,6 @@ Implementation plan for the TypeScript layer of topgg-cli. See the root `ROADMAP
 
 ## Distribution
 
-- [ ] Build to `dist/` with source maps
+- [x] Build to `dist/` with source maps
 - [ ] npm publish flow tied to VERSION
 - [ ] `npx topgg-cli` works out of the box
