@@ -1,8 +1,12 @@
 import { parseArgs } from "./cli/args.js";
-import { resolve } from "./cli/router.js";
 import { printHelp, printVersion } from "./cli/help.js";
+import { registerDefaultCommands } from "./cli/register-default-commands.js";
+import { executeCommand } from "./cli/execute.js";
+import { CommandError } from "./cli/errors.js";
 
 async function main(): Promise<void> {
+    registerDefaultCommands();
+
     const args = parseArgs(process.argv);
 
     if (args.flags["version"]) {
@@ -10,23 +14,20 @@ async function main(): Promise<void> {
         return;
     }
 
-    if (!args.command || args.flags["help"] || args.flags["h"]) {
+    if (!args.command) {
         printHelp();
         return;
     }
 
-    const command = resolve(args.command);
-
-    if (!command) {
-        console.error(`Unknown command: ${args.command}`);
-        console.error(`Run 'topgg --help' to see available commands.`);
-        process.exit(1);
-    }
-
-    await command.run(args);
+    await executeCommand(args);
 }
 
 main().catch((err) => {
+    if (err instanceof CommandError) {
+        console.error(err.message);
+        process.exit(err.code);
+    }
+
     console.error(err instanceof Error ? err.message : String(err));
     process.exit(1);
 });

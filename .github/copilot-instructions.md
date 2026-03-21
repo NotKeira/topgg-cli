@@ -54,7 +54,7 @@ These instructions apply to all Copilot-assisted contributions in this repositor
 ## Branching and Commit Rules
 
 - Never commit directly to `main` or `dev`.
-- Always work on a branch named `dev/branch-name`.
+- Always work on a branch named `feat/branch-name`.
 - One commit per change. Do not bundle unrelated work into a single commit.
 - Focus on one task at a time before moving to the next.
 
