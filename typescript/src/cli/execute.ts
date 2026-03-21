@@ -1,6 +1,7 @@
 import type { ParsedArgs } from "./args.js";
 import { CommandError } from "./errors.js";
 import { printHelp } from "./help.js";
+import { printCommandHelp } from "./output.js";
 import { resolve } from "./router.js";
 
 function isHelpFlag(value: string | boolean | undefined): boolean {
@@ -17,18 +18,14 @@ export async function executeCommand(args: ParsedArgs): Promise<void> {
 
     if (!command) {
         throw new CommandError(
-            `Unknown command: ${args.command}\nRun 'topgg --help' to see available commands.`,
+            `Unknown command '${args.command}'.`,
             2,
+            "Run 'topgg --help' to see available commands.",
         );
     }
 
     if (isHelpFlag(args.flags.help) || isHelpFlag(args.flags.h)) {
-        if (command.usage) {
-            console.log(command.usage);
-            return;
-        }
-
-        printHelp();
+        printCommandHelp(command);
         return;
     }
 

@@ -1,4 +1,4 @@
-import { CommandError, FeatureNotImplementedError } from "../errors.js";
+import { FeatureNotImplementedError, UsageError } from "../errors.js";
 import type { Command } from "../router.js";
 
 function getQuery(subcommand: string | undefined, positional: string[]): string {
@@ -7,7 +7,7 @@ function getQuery(subcommand: string | undefined, positional: string[]): string 
     });
 
     if (parts.length === 0) {
-        throw new CommandError("Usage: topgg search <query>", 2);
+        throw new UsageError("topgg search <query>");
     }
 
     return parts.join(" ");
