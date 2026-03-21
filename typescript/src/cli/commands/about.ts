@@ -1,4 +1,5 @@
 import { createRequire } from "module";
+import { formatField } from "../output.js";
 import type { Command } from "../router.js";
 
 const require = createRequire(import.meta.url);
@@ -13,9 +14,10 @@ export const aboutCommand: Command = {
     description: "Show CLI metadata and runtime information",
     usage: "topgg about",
     run: ({ stdout }) => {
-        stdout(`${pkg.name} v${pkg.version}`);
+        stdout(`${pkg.name} ${pkg.version}`);
         stdout(pkg.description);
-        stdout(`Node.js ${process.version}`);
-        stdout(`Platform ${process.platform}`);
+        stdout("");
+        stdout(formatField("runtime", `Node.js ${process.version}`));
+        stdout(formatField("platform", process.platform));
     },
 };

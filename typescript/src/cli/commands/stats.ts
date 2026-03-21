@@ -1,9 +1,9 @@
-import { CommandError, FeatureNotImplementedError } from "../errors.js";
+import { FeatureNotImplementedError, UsageError } from "../errors.js";
 import type { Command } from "../router.js";
 
 function getBotId(subcommand: string | undefined): string {
     if (!subcommand) {
-        throw new CommandError("Usage: topgg stats <bot-id>", 2);
+        throw new UsageError("topgg stats <bot-id>");
     }
 
     return subcommand;

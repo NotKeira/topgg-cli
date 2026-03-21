@@ -3,6 +3,7 @@ import { printHelp, printVersion } from "./cli/help.js";
 import { registerDefaultCommands } from "./cli/register-default-commands.js";
 import { executeCommand } from "./cli/execute.js";
 import { CommandError } from "./cli/errors.js";
+import { printError } from "./cli/output.js";
 
 async function main(): Promise<void> {
     registerDefaultCommands();
@@ -24,11 +25,11 @@ async function main(): Promise<void> {
 
 main().catch((err) => {
     if (err instanceof CommandError) {
-        console.error(err.message);
+        printError(console.error, err.message, err.hint);
         process.exit(err.code);
     }
 
-    console.error(err instanceof Error ? err.message : String(err));
+    printError(console.error, err instanceof Error ? err.message : String(err));
     process.exit(1);
 });
 

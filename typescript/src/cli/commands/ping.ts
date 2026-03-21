@@ -1,4 +1,5 @@
-import { CommandError } from "../errors.js";
+import { CommandError, UsageError } from "../errors.js";
+import { formatField, style } from "../output.js";
 import type { Command } from "../router.js";
 
 const TOP_GG_API_URL = "https://top.gg/api";
@@ -37,13 +38,13 @@ function resolveMultiTripCount(raw: string | boolean | undefined): number {
     const count = Number.parseInt(raw, 10);
 
     if (!Number.isFinite(count)) {
-        throw new CommandError("--count must be a number.", 2);
+        throw new UsageError("topgg ping", "--count must be a number.");
     }
 
     if (count < MIN_MULTI_TRIP_COUNT || count > MAX_MULTI_TRIP_COUNT) {
-        throw new CommandError(
+        throw new UsageError(
+            "topgg ping",
             `--count must be between ${MIN_MULTI_TRIP_COUNT} and ${MAX_MULTI_TRIP_COUNT}.`,
-            2,
         );
     }
 
@@ -58,7 +59,8 @@ export const pingCommand: Command = {
     run: async ({ args, stdout, stderr }) => {
         const multiTripCount = resolveMultiTripCount(args.flags.count);
 
-        stdout(`Pinging ${TOP_GG_API_URL}...`);
+        stdout(`${style.ok("Pinging")} ${TOP_GG_API_URL}...`);
+        stdout("");
 
         try {
             const coldRttMs = await measureTripMs();
@@ -74,13 +76,12 @@ export const pingCommand: Command = {
 
             const averageMultiTripMs = totalTripMs / multiTripCount;
 
-            stdout(`cold RTT: ${toMilliseconds(coldRttMs)}`);
-            stdout(`average RTT (${multiTripCount} samples): ${toMilliseconds(averageMultiTripMs)}`);
-            stdout(`warm RTT: ${toMilliseconds(warmRttMs)}`);
+            stdout(formatField("cold RTT", toMilliseconds(coldRttMs)));
+            stdout(formatField(`average RTT (${multiTripCount})`, toMilliseconds(averageMultiTripMs)));
+            stdout(formatField("warm RTT", toMilliseconds(warmRttMs)));
         } catch (error) {
             const detail = error instanceof Error ? error.message : String(error);
-            stderr(`Ping failed: ${detail}`);
-            throw new CommandError("Unable to reach the top.gg API.", 4);
+            throw new CommandError("Unable to reach the top.gg API.", 4, detail);
         }
     },
 };
