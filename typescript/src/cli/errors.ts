@@ -7,3 +7,10 @@ export class CommandError extends Error {
         this.code = code;
     }
 }
+
+export class FeatureNotImplementedError extends CommandError {
+    constructor(feature: string) {
+        super(`${feature} is not implemented yet.`, 3);
+        this.name = "FeatureNotImplementedError";
+    }
+}
